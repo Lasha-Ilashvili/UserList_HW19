@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">UserList_HW19</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="email">Email:</string>
+    <string name="first_name">First Name:</string>
+    <string name="last_name">Last Name:</string>
+</resources>

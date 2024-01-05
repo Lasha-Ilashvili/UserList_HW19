@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/userListFragment">
+
+    <fragment
+        android:id="@+id/userListFragment"
+        android:name="com.example.userlist_hw19.presentation.user_list.fragment.UserListFragment"
+        android:label="fragment_user_list"
+        tools:layout="@layout/fragment_user_list">
+        <action
+            android:id="@+id/action_userListFragment_to_userPageFragment"
+            app:destination="@id/userPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userPageFragment"
+        android:name="com.example.userlist_hw19.presentation.user_page.fragment.UserPageFragment"
+        android:label="fragment_user_page"
+        tools:layout="@layout/fragment_user_page">
+        <argument
+            android:name="id"
+            app:argType="integer" />
+    </fragment>
+</navigation>
