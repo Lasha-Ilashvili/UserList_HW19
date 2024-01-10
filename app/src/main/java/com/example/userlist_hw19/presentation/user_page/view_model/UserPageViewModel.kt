@@ -3,7 +3,7 @@ package com.example.userlist_hw19.presentation.user_page.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.userlist_hw19.data.user_page.resources.UserPageState
-import com.example.userlist_hw19.domain.model.User
+import com.example.userlist_hw19.domain.model.GetUser
 import com.example.userlist_hw19.domain.user_page.UserPageRepository
 import com.example.userlist_hw19.presentation.user_page.event.UserPageEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ class UserPageViewModel @Inject constructor(private val userPageRepository: User
     ViewModel() {
 
     private val _userPageState =
-        MutableStateFlow<UserPageState<User>>(UserPageState.Loading(isLoading = true))
+        MutableStateFlow<UserPageState<GetUser>>(UserPageState.Loading(isLoading = true))
 
     val userPageState get() = _userPageState.asStateFlow()
 

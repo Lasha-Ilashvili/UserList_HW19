@@ -3,7 +3,7 @@ package com.example.userlist_hw19.data.user_page.repository
 import com.example.userlist_hw19.data.user_page.mapper.toDomain
 import com.example.userlist_hw19.data.user_page.resources.UserPageState
 import com.example.userlist_hw19.data.user_page.service.UserPageService
-import com.example.userlist_hw19.domain.model.User
+import com.example.userlist_hw19.domain.model.GetUser
 import com.example.userlist_hw19.domain.user_page.UserPageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -12,7 +12,7 @@ import javax.inject.Inject
 class UserPageRepositoryImpl @Inject constructor(private val userPageService: UserPageService) :
     UserPageRepository {
 
-    override suspend fun getUser(id: Int): Flow<UserPageState<User>> {
+    override suspend fun getUser(id: Int): Flow<UserPageState<GetUser>> {
         return flow {
             emit(UserPageState.Loading(isLoading = true))
             try {
@@ -22,8 +22,8 @@ class UserPageRepositoryImpl @Inject constructor(private val userPageService: Us
                 } else {
                     emit(UserPageState.Error("Fetching user failed"))
                 }
-//            } catch (e: Exception) {
-//                emit(UserPageState.Error("Network error"))
+            } catch (e: Exception) {
+                emit(UserPageState.Error("Network error"))
             } finally {
                 emit(UserPageState.Loading(isLoading = false))
             }

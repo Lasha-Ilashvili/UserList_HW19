@@ -1,10 +1,10 @@
 package com.example.userlist_hw19.data.user_list.mapper
 
 import com.example.userlist_hw19.data.model.UserDto
-import com.example.userlist_hw19.domain.model.User
+import com.example.userlist_hw19.domain.model.GetUser
 
 fun List<UserDto>.toDomain() = this.map {
-    User(
+    GetUser(
         id = it.id,
         email = it.email,
         firstName = it.firstName,

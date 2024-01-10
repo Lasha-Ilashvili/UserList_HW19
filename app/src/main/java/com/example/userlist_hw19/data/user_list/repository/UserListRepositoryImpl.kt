@@ -3,7 +3,7 @@ package com.example.userlist_hw19.data.user_list.repository
 import com.example.userlist_hw19.data.user_list.mapper.toDomain
 import com.example.userlist_hw19.data.user_list.resources.UserListState
 import com.example.userlist_hw19.data.user_list.service.UserListService
-import com.example.userlist_hw19.domain.model.User
+import com.example.userlist_hw19.domain.model.GetUser
 import com.example.userlist_hw19.domain.user_list.UserListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -12,7 +12,7 @@ import javax.inject.Inject
 class UserListRepositoryImpl @Inject constructor(private val userListService: UserListService) :
     UserListRepository {
 
-    override suspend fun getUserList(): Flow<UserListState<List<User>>> {
+    override suspend fun getUserList(): Flow<UserListState<List<GetUser>>> {
         return flow {
             emit(UserListState.Loading(isLoading = true))
             try {

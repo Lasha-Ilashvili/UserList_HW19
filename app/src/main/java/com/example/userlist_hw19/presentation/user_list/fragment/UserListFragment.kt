@@ -1,6 +1,7 @@
 package com.example.userlist_hw19.presentation.user_list.fragment
 
-import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -24,12 +25,23 @@ class UserListFragment : BaseFragment<FragmentUserListBinding>(FragmentUserListB
     private lateinit var adapter: UserListItemAdapter
 
     override fun setUp() {
-        userListViewModel.onEvent(UserListEvent.SetUpUserList)
+        userListViewModel.onEvent(UserListEvent.SetUpUserListEvent)
+    }
+
+    override fun setListeners() {
+        binding.btnRemove.setOnClickListener {
+            userListViewModel.onEvent(UserListEvent.RemoveUserEvent)
+        }
     }
 
     override fun setRecycler() {
         adapter = UserListItemAdapter().apply {
-            itemOnClick = { userListViewModel.onEvent(UserListEvent.SendClickEvent(it)) }
+            itemOnClick = { position, isSelected ->
+                userListViewModel.onEvent(UserListEvent.SendClickEvent(position, isSelected))
+            }
+//            itemOnLongClick = {
+//                userListViewModel.onEvent(UserListEvent.SendLongClickEvent())
+//            }
         }
         binding.rvUserList.adapter = adapter
     }
@@ -54,17 +66,39 @@ class UserListFragment : BaseFragment<FragmentUserListBinding>(FragmentUserListB
                         is UserListState.Loading -> {
                             binding.pbUserList.visibility =
                                 if (userListState.isLoading)
-                                    View.VISIBLE
+                                    VISIBLE
                                 else
-                                    View.GONE
+                                    GONE
                         }
 
                         is UserListState.OnClick -> {
-                            findNavController().navigate(
-                                UserListFragmentDirections.actionUserListFragmentToUserPageFragment(
-                                    id = userListState.id
+                            if (userListState.count == 0) {
+
+                                binding.btnRemove.visibility = GONE
+
+                                findNavController().navigate(
+                                    UserListFragmentDirections.actionUserListFragmentToUserPageFragment(
+                                        id = adapter.currentList[userListState.position].id
+                                    )
                                 )
-                            )
+                            } else {
+                                adapter.notifyItemChanged(userListState.position)
+                                binding.btnRemove.visibility = VISIBLE
+                            }
+                        }
+
+                        is UserListState.OnLongClick -> {
+                            adapter.notifyItemChanged(userListState.position)
+
+                            adapter.itemSelected = userListState.count != 0
+                            binding.btnRemove.visibility =
+                                if (adapter.itemSelected) VISIBLE else GONE
+                        }
+
+                        is UserListState.ItemRemoved -> {
+                            adapter.itemSelected = !adapter.itemSelected
+                            adapter.submitList(userListState.value)
+                            binding.btnRemove.visibility = GONE
                         }
                     }
                 }

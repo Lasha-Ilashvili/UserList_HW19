@@ -6,8 +6,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.userlist_hw19.R
 import com.example.userlist_hw19.databinding.UserListItemBinding
-import com.example.userlist_hw19.domain.model.User
+import com.example.userlist_hw19.presentation.model.User
 
 class UserListItemAdapter :
     ListAdapter<User, UserListItemAdapter.UserListItemViewHolder>(UserListDiffUtil) {
@@ -22,7 +23,11 @@ class UserListItemAdapter :
         }
     }
 
-    var itemOnClick: ((Int) -> Unit)? = null
+    var itemOnClick: ((Int, Boolean) -> Unit)? = null
+
+    var itemOnLongClick: ((Int, Boolean) -> Unit)? = null
+
+    var itemSelected = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserListItemViewHolder {
         return UserListItemViewHolder(
@@ -41,16 +46,23 @@ class UserListItemAdapter :
     inner class UserListItemViewHolder(private val binding: UserListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+
         init {
             binding.root.setOnClickListener {
-                itemOnClick?.invoke(currentList[adapterPosition].id)
+                itemOnClick?.invoke(adapterPosition, currentList[adapterPosition].isSelected)
+            }
+
+            binding.root.setOnLongClickListener {
+                itemOnClick?.invoke(adapterPosition, currentList[adapterPosition].isSelected)
+
+                true
             }
         }
 
         fun bind() {
-            val user = currentList[adapterPosition]
-
             with(binding) {
+                val user = currentList[adapterPosition]
+
                 tvEmail.text = user.email
                 tvFirstname.text = user.firstName
                 tvLastname.text = user.lastName
@@ -58,6 +70,15 @@ class UserListItemAdapter :
                 Glide.with(itemView.context)
                     .load(user.avatar)
                     .into(ivAvatar)
+
+                itemView.setBackgroundColor(
+                    itemView.context.getColor(
+                        if (user.isSelected)
+                            R.color.light_gray
+                        else
+                            R.color.black
+                    )
+                )
             }
         }
     }
