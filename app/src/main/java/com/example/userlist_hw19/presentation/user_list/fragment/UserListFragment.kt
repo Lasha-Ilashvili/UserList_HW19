@@ -8,7 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.userlist_hw19.data.user_list.resources.UserListState
+import com.example.userlist_hw19.data.user_list.resources.UserListResult
 import com.example.userlist_hw19.databinding.FragmentUserListBinding
 import com.example.userlist_hw19.presentation.base.BaseFragment
 import com.example.userlist_hw19.presentation.user_list.adapter.UserListItemAdapter
@@ -51,11 +51,11 @@ class UserListFragment : BaseFragment<FragmentUserListBinding>(FragmentUserListB
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 userListViewModel.userListState.collect { userListState ->
                     when (userListState) {
-                        is UserListState.Success -> {
+                        is UserListResult.Success -> {
                             adapter.submitList(userListState.userList)
                         }
 
-                        is UserListState.Error -> {
+                        is UserListResult.Error -> {
                             Toast.makeText(
                                 requireContext(),
                                 userListState.error,
@@ -63,7 +63,7 @@ class UserListFragment : BaseFragment<FragmentUserListBinding>(FragmentUserListB
                             ).show()
                         }
 
-                        is UserListState.Loading -> {
+                        is UserListResult.Loading -> {
                             binding.pbUserList.visibility =
                                 if (userListState.isLoading)
                                     VISIBLE
@@ -71,7 +71,7 @@ class UserListFragment : BaseFragment<FragmentUserListBinding>(FragmentUserListB
                                     GONE
                         }
 
-                        is UserListState.OnClick -> {
+                        is UserListResult.OnClick -> {
                             if (userListState.count == 0) {
 
                                 binding.btnRemove.visibility = GONE
@@ -87,7 +87,7 @@ class UserListFragment : BaseFragment<FragmentUserListBinding>(FragmentUserListB
                             }
                         }
 
-                        is UserListState.OnLongClick -> {
+                        is UserListResult.OnLongClick -> {
                             adapter.notifyItemChanged(userListState.position)
 
                             adapter.itemSelected = userListState.count != 0
@@ -95,7 +95,7 @@ class UserListFragment : BaseFragment<FragmentUserListBinding>(FragmentUserListB
                                 if (adapter.itemSelected) VISIBLE else GONE
                         }
 
-                        is UserListState.ItemRemoved -> {
+                        is UserListResult.ItemRemoved -> {
                             adapter.itemSelected = !adapter.itemSelected
                             adapter.submitList(userListState.value)
                             binding.btnRemove.visibility = GONE

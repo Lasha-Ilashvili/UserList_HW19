@@ -2,7 +2,7 @@ package com.example.userlist_hw19.presentation.user_list.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.userlist_hw19.data.user_list.resources.UserListState
+import com.example.userlist_hw19.data.user_list.resources.UserListResult
 import com.example.userlist_hw19.domain.user_list.UserListRepository
 import com.example.userlist_hw19.presentation.mapper.toUI
 import com.example.userlist_hw19.presentation.model.User
@@ -18,7 +18,7 @@ class UserListViewModel @Inject constructor(private val userListRepository: User
     ViewModel() {
 
     private val _userListState =
-        MutableStateFlow<UserListState<List<User>>>(UserListState.Success(emptyList()))
+        MutableStateFlow<UserListResult<List<User>>>(UserListResult.Success(emptyList()))
 
     val userListState get() = _userListState.asStateFlow()
 
@@ -29,7 +29,7 @@ class UserListViewModel @Inject constructor(private val userListRepository: User
     init {
         viewModelScope.launch {
             userListRepository.getUserList().collect {
-                if (it is UserListState.Success) {
+                if (it is UserListResult.Success) {
                     _userList.value = it.userList.map { getUser ->
                         getUser.toUI()
                     }
@@ -55,14 +55,14 @@ class UserListViewModel @Inject constructor(private val userListRepository: User
         viewModelScope.launch {
             userListRepository.getUserList().collect {
                 when (it) {
-                    is UserListState.Success -> _userListState.value =
-                        UserListState.Success(_userList.value)
+                    is UserListResult.Success -> _userListState.value =
+                        UserListResult.Success(_userList.value)
 
-                    is UserListState.Error -> _userListState.value =
-                        UserListState.Error(it.error)
+                    is UserListResult.Error -> _userListState.value =
+                        UserListResult.Error(it.error)
 
-                    is UserListState.Loading -> _userListState.value =
-                        UserListState.Loading(it.isLoading)
+                    is UserListResult.Loading -> _userListState.value =
+                        UserListResult.Loading(it.isLoading)
 
                     else -> {
 
@@ -82,7 +82,7 @@ class UserListViewModel @Inject constructor(private val userListRepository: User
                 count = ++selectedItems
                 true
             }
-            _userListState.value = UserListState.OnClick(event.position, count)
+            _userListState.value = UserListResult.OnClick(event.position, count)
         }
     }
 
@@ -95,7 +95,7 @@ class UserListViewModel @Inject constructor(private val userListRepository: User
                 selectedItems++
                 true
             }
-            _userListState.value = UserListState.OnLongClick(event.position, selectedItems)
+            _userListState.value = UserListResult.OnLongClick(event.position, selectedItems)
         }
     }
 
@@ -105,7 +105,13 @@ class UserListViewModel @Inject constructor(private val userListRepository: User
                 !it.isSelected
             }
             selectedItems = 0
-            _userListState.value = UserListState.ItemRemoved(_userList.value)
+            _userListState.value = UserListResult.ItemRemoved(_userList.value)
         }
     }
+}
+
+sealed class UserListState<T>() {
+    data class OnClick<T>(val position: Int, val count: Int) : UserListState<T>()
+    data class OnLongClick<T>(val position: Int, val count: Int) : UserListState<T>()
+    data class ItemRemoved<T>(val value: T) : UserListState<T>()
 }
