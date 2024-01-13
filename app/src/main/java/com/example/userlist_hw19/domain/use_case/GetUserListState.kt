@@ -5,9 +5,3 @@ import com.example.userlist_hw19.domain.model.GetUser
 import com.example.userlist_hw19.domain.user_list.UserListRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetUserListState(private val userListRepository: UserListRepository) {
-
-    suspend operator fun invoke(): Flow<UserListResult<List<GetUser>>> {
-        return userListRepository.getUserList()
-    }
-}
