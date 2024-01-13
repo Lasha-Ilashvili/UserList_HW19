@@ -10,6 +10,4 @@ class GetUserListState(private val userListRepository: UserListRepository) {
     suspend operator fun invoke(): Flow<UserListResult<List<GetUser>>> {
         return userListRepository.getUserList()
     }
-
-    nigga
 }
